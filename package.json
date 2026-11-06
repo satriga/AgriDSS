@@ -1,0 +1,20 @@
+{
+  "name": "agridss",
+  "version": "2.0.0",
+  "description": "AgriDSS - IMD Gridded Rainfall GIS, PMFBY Crop Insurance & Actuarial Pricing Platform",
+  "main": "app.py",
+  "scripts": {
+    "start": "py -3 app.py",
+    "dev": "py -3 app.py"
+  },
+  "keywords": [
+    "agridss",
+    "imd-rainfall",
+    "pmfby",
+    "crop-insurance",
+    "gis",
+    "actuarial-pricing"
+  ],
+  "author": "AgriDSS Team",
+  "license": "ISC"
+}
