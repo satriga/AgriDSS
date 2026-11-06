@@ -1,0 +1,15 @@
+[Unit]
+Description=AgriDSS Gunicorn Application Service
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/var/www/agridss
+EnvironmentFile=/var/www/agridss/.env
+ExecStart=/var/www/agridss/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:5000 --timeout 120 wsgi:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

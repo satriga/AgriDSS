@@ -1,0 +1,40 @@
+# ==============================================================================
+# Hostinger CloudLinux / LiteSpeed Passenger WSGI Configuration for Flask
+# ==============================================================================
+
+# 1. Set Default Directory Index to Passenger WSGI (Fixes 403 Forbidden)
+DirectoryIndex passenger_wsgi.py
+
+# 2. Prevent Directory Listing
+Options -Indexes +FollowSymLinks
+
+# 3. Enable CloudLinux Passenger WSGI Engine
+PassengerAppType wsgi
+PassengerStartupFile passenger_wsgi.py
+
+# 4. URL Rewriting to Route All Requests to Flask
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Serve static assets directly if they exist
+    RewriteCond %{REQUEST_URI} ^/static/ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Route all other requests to passenger_wsgi.py
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ passenger_wsgi.py/$1 [QSA,PT,L]
+</IfModule>
+
+# 5. Security: Deny Access to Sensitive System & Config Files
+<FilesMatch "^(\.env|\.git|requirements\.txt|Dockerfile|\.service|HOSTINGER_DEPLOYMENT\.md)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

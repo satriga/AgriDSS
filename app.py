@@ -12,6 +12,10 @@ import datetime
 import numpy as np
 from flask import Flask, render_template, request, jsonify, send_file, Response, session, redirect, url_for
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from imd_processor import IMDProcessor, IMD_CATEGORIES, SPI_CATEGORIES
 from pmfby_processor import PMFBYProcessor
 import live_weather
@@ -22,16 +26,17 @@ from pmfby_pricing_engine import PMFBYPricingEngine
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'agridss-secret-key-gbgohain26-2026')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB max upload
-processor = IMDProcessor(data_dir="data/grd")
-pmfby_proc = PMFBYProcessor(cache_dir="data/pmfby")
-pricing_engine = PMFBYPricingEngine(data_dir="data/pmfby")
-PRICING_EXCEL_PATH = os.path.join(os.path.dirname(__file__), "PMFBY_Pricing_Review_2018_2026.xlsx")
+processor = IMDProcessor(data_dir=os.environ.get('DATA_GRD_DIR', 'data/grd'))
+pmfby_proc = PMFBYProcessor(cache_dir=os.environ.get('DATA_PMFBY_DIR', 'data/pmfby'))
+pricing_engine = PMFBYPricingEngine(data_dir=os.environ.get('DATA_PMFBY_DIR', 'data/pmfby'))
+PRICING_EXCEL_PATH = os.path.join(os.path.dirname(__file__), 'PMFBY_Pricing_Review_2018_2026.xlsx')
 
 # ============================================================================
 # Security & Authentication Configuration
 # ============================================================================
-VALID_USERID = 'gbgohain26'
-VALID_PASSWORDS = [':AgriDss@2609', 'AgriDss@2609']
+VALID_USERID = os.environ.get('VALID_USERID', 'gbgohain26')
+_pass_env = os.environ.get('VALID_PASSWORDS', ':AgriDss@2609,AgriDss@2609')
+VALID_PASSWORDS = [p.strip() for p in _pass_env.split(',') if p.strip()]
 
 @app.before_request
 def require_login():

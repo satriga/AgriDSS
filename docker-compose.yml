@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  agridss:
+    build: .
+    container_name: agridss-app
+    restart: always
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    environment:
+      - FLASK_ENV=production
+      - PORT=5000
